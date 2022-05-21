@@ -8,16 +8,15 @@ const startValue = 0;
 const maxValue = 5;
 
 function App() {
-
-    const [count, setCount] = useState<number>(0)
-
-    useEffect(() => {
-        let countAsString = localStorage.getItem('countValue');
-        if (countAsString) {
-            let newCount = JSON.parse(countAsString);
-            setCount(newCount);
-        }
-    }, []);
+    const countValue = localStorage.getItem('countValue') || 0;
+    // useEffect(() => {
+    //     let countAsString = localStorage.getItem('countValue');
+    //     if (countAsString) {
+    //         let newCount = JSON.parse(countAsString);
+    //         setCount(newCount);
+    //     }
+    // }, []);
+    const [count, setCount] = useState<number>(+countValue)
 
     useEffect(() => {
         localStorage.setItem('countValue', JSON.stringify(count))
