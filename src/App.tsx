@@ -1,26 +1,48 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {Display} from "./components/Display";
+import {CommonButton} from "./components/CommonButton";
+
+const startValue = 0;
+const maxValue = 5;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [count, setCount] = useState<number>(0)
+
+    useEffect(() => {
+        let countAsString = localStorage.getItem('countValue');
+        if (countAsString) {
+            let newCount = JSON.parse(countAsString);
+            setCount(newCount);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('countValue', JSON.stringify(count))
+    }, [count])
+
+
+    function IncCount() {
+        setCount(count + 1);
+    }
+
+    function ResetCount() {
+        setCount(startValue);
+    }
+
+    return (
+        <div className="App">
+            <Display count={count} maxValue={maxValue}/>
+            <div className="buttons">
+                <CommonButton name={'inc'} callBack={IncCount} disabled={count === maxValue} className="button"/>
+                <CommonButton name={'reset'} callBack={ResetCount} disabled={count === startValue} className="button"/>
+            </div>
+
+        </div>
+    );
 }
 
 export default App;
+// const currentValue = localStorage.getItem('countValue') || 0;
