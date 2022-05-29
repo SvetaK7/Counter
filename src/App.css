@@ -5,6 +5,7 @@
     padding: 5px;
     display: flex;
     flex-wrap: wrap;
+    margin: 50px;
 
 }
 
@@ -29,4 +30,18 @@ body{
     text-align: center;
     justify-content: center;
 
+}
+
+.allCounters{
+    display: flex;
+}
+
+.inputsNumber{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.inputsNumber input{
+    width: 80px;
+    margin-left: 5px;
 }

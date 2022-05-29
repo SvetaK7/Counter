@@ -3,12 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 import {Display} from "./components/Display";
 import {CommonButton} from "./components/CommonButton";
+import {DisplaySettingValueCounter} from "./components/DisplaySettingValueCounter";
 
-const startValue = 0;
-const maxValue = 5;
+const countValue = localStorage.getItem('countValue') || '0';
 
 function App() {
-    const countValue = localStorage.getItem('countValue') || 0;
     // useEffect(() => {
     //     let countAsString = localStorage.getItem('countValue');
     //     if (countAsString) {
@@ -16,32 +15,81 @@ function App() {
     //         setCount(newCount);
     //     }
     // }, []);
-    const [count, setCount] = useState<number>(+countValue)
+    const [value, setValue] = useState<string>(countValue);
+    const [color, setColor] = useState('green');
+    const [maxValue, setMaxValue] = useState('0')
+    const [startValue, setStartValue] = useState('0')
+    const getOnChangeMaxValue = (maxvalue: string) => {
+        setMaxValue(maxvalue)
+    }
+    const getOnChangeStartValue = (minvalue: string) => {
+        setStartValue(minvalue)
+    }
+    const setSettingValue = () => {
+        setValue(startValue);
+        if (value === maxValue) {
+            setColor('red')
+        }
+    }
+    useEffect(() => {
+        if (+startValue < 0 || +maxValue < 0) {
+            setValue('value negative!!');
+            setColor('red');
+        } else if (+startValue > 0 && startValue === maxValue) {
+            setValue('Incorrect value!');
+            setColor('red');
+        } else if (maxValue < startValue) {
+            setValue('max value can not less start');
+            setColor('red');
+        } else {
+            setValue('enter value and press set');
+            setColor('green');
+        }
+    }, [maxValue, startValue])
+    useEffect(() => {
+        if (value === maxValue) {
+            setColor('red');
+        }
+    }, [value, maxValue])
 
     useEffect(() => {
-        localStorage.setItem('countValue', JSON.stringify(count))
-    }, [count])
+        localStorage.setItem('countValue', JSON.stringify(value))
+    }, [value])
 
 
     function IncCount() {
-        setCount(count + 1);
+        setValue(`${+value + 1}`);
     }
 
     function ResetCount() {
-        setCount(startValue);
+        setValue(startValue);
+        setColor('green');
     }
 
-    return (
-        <div className="App">
-            <Display count={count} maxValue={maxValue}/>
-            <div className="buttons">
-                <CommonButton name={'inc'} callBack={IncCount} disabled={count === maxValue} className="button"/>
-                <CommonButton name={'reset'} callBack={ResetCount} disabled={count === startValue} className="button"/>
-            </div>
 
+    return (
+        <div className="allCounters">
+            <div className="App">
+                <DisplaySettingValueCounter
+                    getOnChangeMaxValue={getOnChangeMaxValue}
+                    getOnChangeStartValue={getOnChangeStartValue}/>
+                <div className="buttons">
+                    <CommonButton name={'set'} callBack={setSettingValue} disabled={color === 'red'}
+                                  className="button"/>
+                </div>
+            </div>
+            <div className="App">
+                <Display value={value} color={color}/>
+                <div className="buttons">
+                    <CommonButton name={'inc'} callBack={IncCount} disabled={value === maxValue} className="button"/>
+                    <CommonButton name={'reset'} callBack={ResetCount} disabled={value === startValue}
+                                  className="button"/>
+                </div>
+            </div>
         </div>
+
+
     );
 }
 
 export default App;
-// const currentValue = localStorage.getItem('countValue') || 0;
