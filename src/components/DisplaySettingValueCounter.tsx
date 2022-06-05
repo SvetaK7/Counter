@@ -3,6 +3,8 @@ import React, {ChangeEvent} from 'react';
 type DisplaySettingValueCounterType = {
     getOnChangeMaxValue: (maxvalue: string) => void
     getOnChangeStartValue: (maxvalue: string) => void
+    maxValue: string
+    startValue: string
 }
 
 export const DisplaySettingValueCounter = (props:DisplaySettingValueCounterType) => {
@@ -18,11 +20,11 @@ export const DisplaySettingValueCounter = (props:DisplaySettingValueCounterType)
         <div className="inputsNumber">
             <div>
                 <span>max value:</span>
-                <input type={"number"} onChange={onChangeMaxValue}/>
+                <input value={props.maxValue} type={"number"} onChange={onChangeMaxValue}/>
             </div>
             <div>
                 <span>start value:</span>
-                <input type={"number"} onChange={onChangeStartValue}/>
+                <input value={props.startValue} type={"number"} onChange={onChangeStartValue}/>
             </div>
         </div>
     )

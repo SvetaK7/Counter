@@ -6,6 +6,8 @@ import {CommonButton} from "./components/CommonButton";
 import {DisplaySettingValueCounter} from "./components/DisplaySettingValueCounter";
 
 const countValue = localStorage.getItem('countValue') || '0';
+const maxValueStor = localStorage.getItem('maxValue') || '0';
+const startValueStor = localStorage.getItem('startValue') || '0';
 
 function App() {
     // useEffect(() => {
@@ -17,8 +19,8 @@ function App() {
     // }, []);
     const [value, setValue] = useState<string>(countValue);
     const [color, setColor] = useState('green');
-    const [maxValue, setMaxValue] = useState('0')
-    const [startValue, setStartValue] = useState('0')
+    const [maxValue, setMaxValue] = useState<string>(maxValueStor)
+    const [startValue, setStartValue] = useState(startValueStor)
     const getOnChangeMaxValue = (maxvalue: string) => {
         setMaxValue(maxvalue)
     }
@@ -42,7 +44,7 @@ function App() {
             setValue('max value can not less start');
             setColor('red');
         } else {
-            setValue('enter value and press set');
+            setValue(+value ? value : 'enter value and press set');
             setColor('green');
         }
     }, [maxValue, startValue])
@@ -53,9 +55,14 @@ function App() {
     }, [value, maxValue])
 
     useEffect(() => {
-        localStorage.setItem('countValue', JSON.stringify(value))
+        localStorage.setItem('countValue', value)
     }, [value])
-
+    useEffect(() => {
+        localStorage.setItem('maxValue',maxValue)
+    }, [maxValue])
+    useEffect(() => {
+        localStorage.setItem('startValue', startValue)
+    }, [startValue])
 
     function IncCount() {
         setValue(`${+value + 1}`);
@@ -72,7 +79,10 @@ function App() {
             <div className="App">
                 <DisplaySettingValueCounter
                     getOnChangeMaxValue={getOnChangeMaxValue}
-                    getOnChangeStartValue={getOnChangeStartValue}/>
+                    getOnChangeStartValue={getOnChangeStartValue}
+                    maxValue={maxValue}
+                    startValue={startValue}
+                />
                 <div className="buttons">
                     <CommonButton name={'set'} callBack={setSettingValue} disabled={color === 'red'}
                                   className="button"/>
