@@ -4,59 +4,73 @@ import './App.css';
 import {Display} from "./components/Display";
 import {CommonButton} from "./components/CommonButton";
 import {DisplaySettingValueCounter} from "./components/DisplaySettingValueCounter";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./state/store";
+import {setStartValueAC} from "./state/startValue-reducer";
+import {setMaxValueAC} from "./state/maxValue-reducer";
+import {incValueAC, setValueAC} from "./state/counter-reducer";
 
-const countValue = localStorage.getItem('countValue') || '0';
-const maxValueStor = localStorage.getItem('maxValue') || '0';
-const startValueStor = localStorage.getItem('startValue') || '0';
+// const countValue = localStorage.getItem('countValue') || '0';
+// const maxValueStor = localStorage.getItem('maxValue') || '0';
+// const startValueStor = localStorage.getItem('startValue') || '0';
 
 function App() {
-    // useEffect(() => {
-    //     let countAsString = localStorage.getItem('countValue');
-    //     if (countAsString) {
-    //         let newCount = JSON.parse(countAsString);
-    //         setCount(newCount);
-    //     }
-    // }, []);
-    const [value, setValue] = useState<string>(countValue);
+
+    const startValue = useSelector<AppRootStateType, string>(state => state.startValue)
+    const maxValue = useSelector<AppRootStateType, string>(state => state.maxValue)
+    // @ts-ignore
+    const countValue = useSelector<AppRootStateType, string>(state => state.countValue.value)
+    const dispatch = useDispatch();
+
+    // const [value, setValue] = useState<string>(countValue);
     const [color, setColor] = useState('green');
-    const [maxValue, setMaxValue] = useState<string>(maxValueStor)
-    const [startValue, setStartValue] = useState(startValueStor)
+
     const getOnChangeMaxValue = (maxvalue: string) => {
-        setMaxValue(maxvalue)
+        let action = setMaxValueAC(maxvalue);
+        dispatch(action)
     }
     const getOnChangeStartValue = (minvalue: string) => {
-        setStartValue(minvalue)
+        let action = setStartValueAC(minvalue);
+        dispatch(action)
     }
     const setSettingValue = () => {
-        setValue(startValue);
-        if (value === maxValue) {
+        // setValue(startValue);
+        // if (value === maxValue) {
+        //     setColor('red')
+        // }
+        dispatch(setValueAC(startValue));
+        if (countValue === maxValue) {
             setColor('red')
         }
     }
     useEffect(() => {
         if (+startValue < 0 || +maxValue < 0) {
-            setValue('value negative!!');
+            // setValue('value negative!!');
+            dispatch(setValueAC('value negative!!'))
             setColor('red');
         } else if (+startValue > 0 && startValue === maxValue) {
-            setValue('Incorrect value!');
+            // setValue('Incorrect value!');
+            dispatch(setValueAC('Incorrect value!'))
             setColor('red');
         } else if (maxValue < startValue) {
-            setValue('max value can not less start');
+            // setValue('max value can not less start');
+            dispatch(setValueAC('max value can not less start'))
             setColor('red');
         } else {
-            setValue(+value ? value : 'enter value and press set');
+            // setValue(+value ? value : 'enter value and press set');
+            dispatch(setValueAC(+countValue ? countValue : 'enter value and press set'))
             setColor('green');
         }
     }, [maxValue, startValue])
     useEffect(() => {
-        if (value === maxValue) {
+        if (countValue === maxValue) {
             setColor('red');
         }
-    }, [value, maxValue])
+    }, [countValue, maxValue])
 
     useEffect(() => {
-        localStorage.setItem('countValue', value)
-    }, [value])
+        localStorage.setItem('countValue', countValue)
+    }, [countValue])
     useEffect(() => {
         localStorage.setItem('maxValue',maxValue)
     }, [maxValue])
@@ -65,11 +79,15 @@ function App() {
     }, [startValue])
 
     function IncCount() {
-        setValue(`${+value + 1}`);
+        // setValue(`${+value + 1}`);
+        dispatch(incValueAC())
+        console.log(countValue)
+        console.log(maxValue)
     }
 
     function ResetCount() {
-        setValue(startValue);
+        // setValue(startValue);
+        dispatch(setValueAC(startValue))
         setColor('green');
     }
 
@@ -89,10 +107,10 @@ function App() {
                 </div>
             </div>
             <div className="App">
-                <Display value={value} color={color}/>
+                <Display value={countValue} color={color}/>
                 <div className="buttons">
-                    <CommonButton name={'inc'} callBack={IncCount} disabled={value === maxValue} className="button"/>
-                    <CommonButton name={'reset'} callBack={ResetCount} disabled={value === startValue}
+                    <CommonButton name={'inc'} callBack={IncCount} disabled={countValue == maxValue} className="button"/>
+                    <CommonButton name={'reset'} callBack={ResetCount} disabled={countValue === startValue}
                                   className="button"/>
                 </div>
             </div>
